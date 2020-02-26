@@ -1,0 +1,92 @@
+
+################################################################
+## configuration.yaml
+## Dependencies: None
+## Created: 18.02.2020
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 1.0      18.02.2020        Created
+
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+#MQTT
+mqtt:
+    broker: 192.168.1.115
+    discovery: true
+    discovery_prefix: homeassistant
+
+lovelace:
+  mode: yaml
+
+#Logging
+influxdb: !include include/influx.yaml
+    
+#Speedtest
+speedtestdotnet:
+  scan_interval:
+    hours: 2
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+
+#HACS
+hacs:
+  token: !secret hacstoken
+  theme: true
+  python_script: true
+    
+    
+
+tibber:
+  access_token: !secret tibbertoken
+
+sonos:
+  media_player:
+    hosts:
+      - 192.168.1.101
+      - 192.168.1.108
+
+notify:
+  # - name: pushover
+  #   platform: pushover
+  #   api_key: !secret pushover_api
+  #   user_key: !secret pushover_key
+  - name: facebook
+    platform: facebook
+    page_access_token: !secret facebooktoken
+  # - name: slack
+  #   platform: slack
+  #   api_key: !secret slacktoken
+  #   default_channel: '#husmeldinger'
+  #   username: Toresmyr48
+
+homeassistant:
+  #customize: !include customize.yaml
+  #customize_glob: !include customize_glob.yaml
+  packages: !include_dir_named packages
+  
+
+ ###################
+##### Includes
+###################
+#sensor: !include_dir_merge_list sensors
+#automation: !include_dir_merge_list automation
+#script: !include scripts.yaml
+#scene: !include scenes.yaml
+input_boolean: !include_dir_merge_named input_boolean
+input_select: !include_dir_merge_named input_select

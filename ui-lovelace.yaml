@@ -1,0 +1,268 @@
+resources:
+  - url: /local/bignumber.js?v=1
+    type: js
+
+title: Home
+views:
+# Side 1 - For visning på mobiltelefoner.
+# Hurtig operasjon
+  - title: mobil
+    icon: mdi:cellphone-android
+    cards:
+      - type: glance
+        entities:
+          - entity: input_boolean.good_morning
+            tap_action:
+              action: toggle
+          - entity: input_boolean.good_night
+            icon: mdi:weather-night
+            tap_action:
+              action: toggle
+          - entity: input_boolean.garage
+            icon: mdi:garage
+            tap_action:
+              action: toggle
+      - type: picture-entity
+        entity: input_boolean.home
+        state_image:
+          "on": /local/icons/blue-27.png
+          "off": /local/icons/blue-30.png
+        tap_action:
+          action: toggle
+
+# Side 2 - For visning på nettbrett i hall  
+  - title: Husstyring
+    icon: mdi:home
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards: 
+          - type: glance
+            entities:
+            - entity: input_boolean.good_morning
+              tap_action:
+                action: toggle
+            - entity: input_boolean.good_night
+              icon: mdi:weather-night
+              tap_action:
+                action: toggle    
+            - entity: input_boolean.garage
+              icon: mdi:garage
+              tap_action:
+                action: toggle
+            - entity: group.utelys
+              icon: mdi:track-light
+              tap_action:
+                action: toggle
+          - type: horizontal-stack
+            cards: 
+              - type: weather-forecast
+                entity: weather.toresmyr_48
+              - type: picture-entity
+                entity: input_boolean.home
+                state_image:
+                  "on": /local/icons/blue-27.png
+                  "off": /local/icons/blue-30.png
+                tap_action:
+                  action: toggle
+              - type: vertical-stack
+                cards:
+                  - type: horizontal-stack
+                    cards:
+                      - type: entities
+                        title: Døgnstatus
+                        show_header_toggle: false
+                        entities:
+                          - input_select.dognstatus
+                      - type: gauge
+                        title: Forbruk
+                        name: Forbruk
+                        unit: W
+                        min: 0
+                        max: 15000
+                        entity: sensor.real_time_consumption_toresmyr_48
+                        severity:
+                          green: 0
+                          yellow: 6000
+                          red: 8000
+                  - type: history-graph
+                    title: Historisk forbruk
+                    hours_to_show: 24
+                    refresh_interval: 10
+                    entities: 
+                      - sensor.real_time_consumption_toresmyr_48
+       
+
+# 
+
+# Side 4 - For visning og styring av bryggerhuset
+  - title: Bryggerhus
+    icon: mdi:beer
+    panel: true
+    cards: 
+      - type: vertical-stack
+        cards:
+          - type: glance
+            entities:
+              - entity: group.lys_bryggerhus
+                icon: mdi:spotlight-beam
+                # tap_action:
+                #   acion: toggle
+              - entity: switch.bryggerhus_bryggeri_ventilasjon_bryter_switch
+                icon: mdi:fan
+                # tap_action:
+                #   acion: toggle
+              - entity: light.utendors_utelys_lys_dimmer_bryggerhus_level
+          - type: horizontal-stack
+            cards:
+              - type: light
+                entity: light.bryggerhus_bryggeri_lys_dimmer_spotter_level
+                name: Spotter Bryggeri
+              - type: light
+                entity: light.bryggerhus_tasteroom_lys_dimmer_spotter_level
+                name: Spotter Tasteroom
+              - type: light
+                entity: light.bryggerhus_tasteroom_lys_dimmer_taklys_level
+                name: Taklys Tasteroom
+          - type: horizontal-stack
+            cards:
+            - type: sensor
+              entity: sensor.bryggerhus_rh
+              name: RH
+            - type: thermostat
+              entity: climate.gulvvarme_bryggerhus
+            - type: sensor
+              entity: sensor.bryggerhus_temperatur
+              name: Temperatur
+          - type: horizontal-stack
+            cards:
+            - type: light
+              entity: light.utendors_utelys_lys_dimmer_bryggerhus_level
+            - type: entity-button
+              entity: group.lys_bryggerhus
+              icon: mdi:spotlight-beam
+            - type: entity-button
+              name: Viftestyring bryggerhus
+              icon: mdi:fan
+              tap_action:
+                action: toggle
+              entity: switch.bryggerhus_bryggeri_ventilasjon_bryter_switch
+            - type: entity-button
+            - type: entity-button
+                
+# Side 5 - Varmestyring gulvvarme
+  - title: Varmestyring
+    icon: mdi:radiator
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:bignumber-card
+                title: Stuetemperatur sjenk
+                entity: sensor.e1_stue_deteksjon_bevegelsessensor_temperature
+                scale: 30px
+                from: bottom
+                min: 0
+                max: 35
+                severity:
+                - value: 17
+                  style: 'var(--label-badge-red)'
+                - value: 20
+                  style: 'var(--label-badge-yellow)'
+                - value: 30
+                  style: 'var(--label-badge-green)'
+              - type: custom:bignumber-card
+                title: Stuetemperatur røykvarsler
+                entity: sensor.e1_stue_deteksjon_roykvarsler_temperature
+                scale: 30px
+                from: bottom
+                min: 0
+                max: 30
+                severity:
+                - value: 17
+                  style: 'var(--label-badge-red)'
+                - value: 20
+                  style: 'var(--label-badge-yellow)'
+                - value: 30
+                  style: 'var(--label-badge-green)'
+          - type: horizontal-stack
+            cards:
+              - type: thermostat
+                entity: climate.e1_stue_varme_gulvtermostat_mode
+                name: Stuegulv
+              - type: thermostat
+                entity: climate.e1_spisestue_varme_gulvtermostat_mode
+                name: Spisestuegulv
+              - type: thermostat
+                entity: climate.e1_kjokken_varme_gulvtermostat_mode
+                name: Kjøkkengulv
+              - type: thermostat
+                entity: climate.e1_bad_varme_gulvtermostat_mode
+                name: Bad 1.Etasje
+              - type: thermostat
+                entity: climate.e1_vaskerom_varme_gulvtermostat_mode
+                name: Vaskerom
+          - type: horizontal-stack
+            cards:
+              - type: thermostat
+                entity: climate.e2_loftstue_varme_gulvtermostat_mode
+                name: Loftstuegulv
+              - type: thermostat
+                entity: climate.e2_bad_varme_gulvtermostat_mode
+                name: Bad 2.etasje
+              - type: thermostat
+                entity: climate.e2_master_varme_gulvtermostat_mode
+                name: Soverom
+              - type: thermostat
+                entity: climate.e2_emil_varme_gulvtermostat_mode
+                name: Emils rom
+              - type: thermostat
+                entity: climate.e2_kontor_varme_gulvtermostat_mode
+                name: Kontor
+
+# Side 6 - Mobiltilpasset informasjon om temperatur
+  - title: Utendørs
+    icon: mdi:sunglasses
+    panel: true 
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: glance
+            entities:
+            - entity: sensor.temperatur_utendors_temp   
+            - entity: sensor.temperatur_utendors_rh             
+                
+# Side 7 - Mobiltilpasset lysstyring
+  - title: Lysstyring - Mobiltilpasset
+    icon: mdi:lamp
+    panel: true
+    cards:
+    - type: glance
+      entities:
+        - entity: switch.e1_stue_lys_bryter_stalampe
+          tap_action:
+            action: toggle
+          icon: mdi:desk-lamp
+          name: Gulvlampe
+        - entity: group.pyntelys
+          tap_action:
+            action: toggle
+          icon: mdi:lamp
+        - entity: light.e1_stue_lys_dimmer_taklys_level 
+          icon: mdi:spotlight-beam
+          name: Taklampe Stue
+        - entity: light.e1_stue_lys_dimmer_takspotter_level 
+          icon: mdi:spotlight-beam
+          name: Spotter Stue
+        - entity: light.e1_midtstue_lys_dimmer_takspotter_level 
+          icon: mdi:spotlight-beam
+          name: Spotter Midtstue
+        - entity: light.e1_spisestue_lys_dimmer_takspotter_level 
+          icon: mdi:spotlight-beam
+          name: Spotter Spisestue
+      
+  
+                
+
