@@ -1,0 +1,36 @@
+################################################################
+## Packages / kjokken.yaml
+## Dependencies: None
+## Created: 08.02.2019
+## Description: Kjøkkenrelatert stæsj
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      08.02.2019      Created
+## 1.0      10.12.2019      Moved to new production server
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+  - platform: template
+    sensors:
+      oppvaskaktiv:
+        friendly_name: "Oppvaskmaskin aktiv"
+        value_template: >-
+          {% if states('sensor.e1_kjokken_energi_driftoppvaskmaskin_power.state')|float > 20.0 %}
+            1
+          {% elif states('sensor.e1_kjokken_energi_driftoppvaskmaskin_power.state')|float < 5.0  %}
+            0
+          {% endif %}
+
+group:
+  forbrukere:
+    name: Strømforbrukere
+    entities: 
+      - sensor.oppvaskaktiv
+      
+      

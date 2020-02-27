@@ -1,0 +1,545 @@
+################################################################
+## Packages / power.yaml
+## Dependencies: None
+## Created: 30.12.2018
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 1.0        18.02.2020      Created/Added
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+  - platform: statistics
+    name: "Forbruk_uke"
+    entity_id: sensor.meterconsumption
+    max_age:
+      days: 7
+#########################################################################################################
+# Holder dagens strømpris                                                                               #
+#########################################################################################################
+  - platform: mqtt
+    name: "Strømpris i dag 00:00 - 01:00"
+    state_topic: "power/dagens_0"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 01:00 - 02:00"
+    state_topic: "power/dagens_1"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 02:00 - 03:00"
+    state_topic: "power/dagens_2"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 03:00 - 04:00"
+    state_topic: "power/dagens_3"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 04:00 - 05:00"
+    state_topic: "power/dagens_4"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 05:00 - 06:00"
+    state_topic: "power/dagens_5"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 06:00 - 07:00"
+    state_topic: "power/dagens_6"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 07:00 - 08:00"
+    state_topic: "power/dagens_7"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 08:00 - 09:00"
+    state_topic: "power/dagens_8"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 09:00 - 10:00"
+    state_topic: "power/dagens_9"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 10:00 - 11:00"
+    state_topic: "power/dagens_10"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 11:00 - 12:00"
+    state_topic: "power/dagens_11"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 12:00 - 13:00"
+    state_topic: "power/dagens_12"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 13:00 - 14:00"
+    state_topic: "power/dagens_13"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 14:00 - 15:00"
+    state_topic: "power/dagens_14"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 15:00 - 16:00"
+    state_topic: "power/dagens_15"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 16:00 - 17:00"
+    state_topic: "power/dagens_16"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 17:00 - 18:00"
+    state_topic: "power/dagens_17"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 18:00 - 19:00"
+    state_topic: "power/dagens_18"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 19:00 - 20:00"
+    state_topic: "power/dagens_19"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 20:00 - 21:00"
+    state_topic: "power/dagens_20"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 21:00 - 22:00"
+    state_topic: "power/dagens_21"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 22:00 - 23:00"
+    state_topic: "power/dagens_22"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i dag 23:00 - 24:00"
+    state_topic: "power/dagens_23"
+    qos: 0
+    unit_of_measurement: "Kr"
+    
+#########################################################################################################
+# Holder morgendagens strømpris                                                                         #
+#########################################################################################################
+  - platform: mqtt
+    name: "Strømpris i morgen 00:00 - 01:00"
+    state_topic: "power/morgendagens_0"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 01:00 - 02:00"
+    state_topic: "power/morgendagens_1"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 02:00 - 03:00"
+    state_topic: "power/morgendagens_2"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 03:00 - 04:00"
+    state_topic: "power/morgendagens_3"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 04:00 - 05:00"
+    state_topic: "power/morgendagens_4"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 05:00 - 06:00"
+    state_topic: "power/morgendagens_5"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 06:00 - 07:00"
+    state_topic: "power/morgendagens_6"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 07:00 - 08:00"
+    state_topic: "power/morgendagens_7"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 08:00 - 09:00"
+    state_topic: "power/morgendagens_8"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 09:00 - 10:00"
+    state_topic: "power/morgendagens_9"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 10:00 - 11:00"
+    state_topic: "power/morgendagens_10"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 11:00 - 12:00"
+    state_topic: "power/morgendagens_11"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 12:00 - 13:00"
+    state_topic: "power/morgendagens_12"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 13:00 - 14:00"
+    state_topic: "power/morgendagens_13"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 14:00 - 15:00"
+    state_topic: "power/morgendagens_14"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 15:00 - 16:00"
+    state_topic: "power/morgendagens_15"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 16:00 - 17:00"
+    state_topic: "power/morgendagens_16"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 17:00 - 18:00"
+    state_topic: "power/morgendagens_17"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 18:00 - 19:00"
+    state_topic: "power/morgendagens_18"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 19:00 - 20:00"
+    state_topic: "power/morgendagens_19"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 20:00 - 21:00"
+    state_topic: "power/morgendagens_20"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 21:00 - 22:00"
+    state_topic: "power/morgendagens_21"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 22:00 - 23:00"
+    state_topic: "power/morgendagens_22"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Strømpris i morgen 23:00 - 24:00"
+    state_topic: "power/morgendagens_23"
+    qos: 0
+    unit_of_measurement: "Kr" 
+    
+    
+#########################################################################################################
+# Holder nettleiepriser                                                                                 #
+#########################################################################################################
+  - platform: mqtt
+    name: "Nettleie Fastledd"
+    state_topic: "power/fastledd"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+  - platform: mqtt
+    name: "Nettleie Energiledd"
+    state_topic: "power/energiledd"
+    qos: 0
+    unit_of_measurement: "Kr"
+
+    
+    
+    
+
+  - platform: template
+    sensors:
+      max_tibber:
+        friendly_name: "Strøm Maks pris"
+        unit_of_measurement: 'kr'
+        value_template: "{{states.sensor.electricity_price_toresmyr_48.attributes.max_price}}"
+      min_tibber:
+        friendly_name: "Strøm Min pris"
+        unit_of_measurement: 'kr'
+        value_template: "{{states.sensor.electricity_price_toresmyr_48.attributes.min_price}}"
+      est_consumption:
+        friendly_name: "Strøm Estimert årlig forbruk"
+        unit_of_measurement: 'kWh'
+        value_template: "{{states.sensor.electricity_price_toresmyr_48.attributes.estimated_annual_consumption}}"
+      accumulated_consumption:
+        friendly_name: "Akkumulert forbruk"
+        unit_of_measurement: 'kWh'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.accumulatedConsumption}}"
+      accumulated_cost:
+        friendly_name: "Akkumulert kost"
+        unit_of_measurement: 'Kr'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.accumulatedCost}}"
+      price_vs_consumption:
+        friendly_name: "Gjennomsnittlig kWh pris"
+        unit_of_measurement: 'Kr'
+        value_template: "{{  (states.sensor.real_time_consumption_toresmyr_48.attributes.accumulatedCost|float) / (states.sensor.real_time_consumption_toresmyr_48.attributes.accumulatedConsumption|float)  }}"
+      energiledd_total:
+        friendly_name: "Energiledd kostnad"
+        unit_of_measurement: 'Kr'
+        value_template: " {{ ((states.sensor.real_time_consumption_toresmyr_48.attributes.accumulatedConsumption)|float * (states.sensor.nettleie_energiledd.state)|float)|round(6) }} "
+      voltagephase1: 
+        friendly_name: "Fase 1 - Volt"
+        unit_of_measurement: 'V'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.voltagePhase1}}"
+      voltagephase2: 
+        friendly_name: "Fase 2 - Volt"
+        unit_of_measurement: 'V'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.voltagePhase2}}"
+      voltagephase3: 
+        friendly_name: "Fase 3 - Volt"
+        unit_of_measurement: 'V'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.voltagePhase3}}"
+      currentphase1: 
+        friendly_name: "Fase 1 - Ampere"
+        unit_of_measurement: 'A'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.currentPhase1}}"
+      currentphase2: 
+        friendly_name: "Fase 2 - Ampere"
+        unit_of_measurement: 'A'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.currentPhase2}}"
+      currentphase3: 
+        friendly_name: "Fase 3 - Ampere"
+        unit_of_measurement: 'A'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.currentPhase3}}"
+      meterconsumption: 
+        friendly_name: "Målerstand"
+        unit_of_measurement: 'kWh'
+        value_template: "{{states.sensor.real_time_consumption_toresmyr_48.attributes.lastMeterConsumption}}"
+       
+       
+ 
+        
+  - platform: template
+    sensors:
+      powersave:
+        friendly_name: "Strømsparing anbefalt"
+        value_template: >-
+          {% if float(states.sensor.electricity_price_toresmyr_48.state) > 0.9 * float(states.sensor.electricity_price_toresmyr_48.attributes.max_price) %}
+            {% if (float(states.sensor.electricity_price_toresmyr_48.attributes.max_price) - float(states.sensor.electricity_price_toresmyr_48.attributes.min_price)) > (0.25 * float(states.sensor.electricity_price_toresmyr_48.attributes.max_price)) %}
+              1
+            {% else %}
+              0
+            {% endif %}
+          {% else %}
+            0
+          {% endif %}
+      powersave_price:
+        friendly_name: "Pris strømsparing"
+        unit_of_measurement: 'Kr'
+        value_template: "{{ (states.sensor.electricity_price_toresmyr_48.attributes.max_price|float) * 0.9 }}"
+
+        
+        
+
+        
+binary_sensor:
+  - platform: mqtt
+    name: "Prisrequest"
+    state_topic: "power/hent"
+    qos: 0
+    payload_on: "1"
+    payload_off: "0"
+
+input_boolean:
+  trigger_price_request:
+    name: Hent Priser
+
+group:
+  power_info:
+    name: "Strøminformasjon"
+    entities:
+      - sensor.max_tibber
+      - sensor.min_tibber
+      - sensor.real_time_consumption_toresmyr_48
+      - sensor.accumulated_consumption
+      - sensor.accumulated_cost
+      - sensor.price_vs_consumption
+      - sensor.energiledd_total
+      - sensor.nettleie_fastledd
+      - sensor.nettleie_energiledd
+      - sensor.powersave
+      - sensor.powersave_price
+      - sensor.meterconsumption
+      - sensor.voltagephase1
+      - sensor.voltagephase2
+      - sensor.voltagephase3
+      - sensor.currentphase1
+      - sensor.currentphase2
+      - sensor.currentphase3
+
+  power_price:
+    name: "Strømpriser"
+    entities:
+      - input_boolean.trigger_price_request
+      - sensor.strompris_i_dag_00_00_01_00
+      - sensor.strompris_i_dag_01_00_02_00
+      - sensor.strompris_i_dag_02_00_03_00
+      - sensor.strompris_i_dag_03_00_04_00
+      - sensor.strompris_i_dag_04_00_05_00
+      - sensor.strompris_i_dag_05_00_06_00
+      - sensor.strompris_i_dag_06_00_07_00
+      - sensor.strompris_i_dag_07_00_08_00
+      - sensor.strompris_i_dag_08_00_09_00
+      - sensor.strompris_i_dag_09_00_10_00
+      - sensor.strompris_i_dag_10_00_11_00
+      - sensor.strompris_i_dag_11_00_12_00
+      - sensor.strompris_i_dag_12_00_13_00
+      - sensor.strompris_i_dag_13_00_14_00
+      - sensor.strompris_i_dag_14_00_15_00
+      - sensor.strompris_i_dag_15_00_16_00
+      - sensor.strompris_i_dag_16_00_17_00
+      - sensor.strompris_i_dag_17_00_18_00
+      - sensor.strompris_i_dag_18_00_19_00
+      - sensor.strompris_i_dag_19_00_20_00
+      - sensor.strompris_i_dag_20_00_21_00
+      - sensor.strompris_i_dag_21_00_22_00
+      - sensor.strompris_i_dag_22_00_23_00
+      - sensor.strompris_i_dag_23_00_24_00
+      - sensor.strompris_i_morgen_00_00_01_00
+      - sensor.strompris_i_morgen_01_00_02_00
+      - sensor.strompris_i_morgen_02_00_03_00
+      - sensor.strompris_i_morgen_03_00_04_00
+      - sensor.strompris_i_morgen_04_00_05_00
+      - sensor.strompris_i_morgen_05_00_06_00
+      - sensor.strompris_i_morgen_06_00_07_00
+      - sensor.strompris_i_morgen_07_00_08_00
+      - sensor.strompris_i_morgen_08_00_09_00
+      - sensor.strompris_i_morgen_09_00_10_00
+      - sensor.strompris_i_morgen_10_00_11_00
+      - sensor.strompris_i_morgen_11_00_12_00
+      - sensor.strompris_i_morgen_12_00_13_00
+      - sensor.strompris_i_morgen_13_00_14_00
+      - sensor.strompris_i_morgen_14_00_15_00
+      - sensor.strompris_i_morgen_15_00_16_00
+      - sensor.strompris_i_morgen_16_00_17_00
+      - sensor.strompris_i_morgen_17_00_18_00
+      - sensor.strompris_i_morgen_18_00_19_00
+      - sensor.strompris_i_morgen_19_00_20_00
+      - sensor.strompris_i_morgen_20_00_21_00
+      - sensor.strompris_i_morgen_21_00_22_00
+      - sensor.strompris_i_morgen_22_00_23_00
+      - sensor.strompris_i_morgen_23_00_24_00
+      
+
+       
+automation:
+  - alias: "Notifikasjon strømsparing på"
+    trigger:
+      platform: state
+      entity_id: sensor.powersave
+      to: 'på'
+    action:
+      service: notify.pushover
+      data:
+        message: Strømpris er såpass høy at strømsparing er anbefalt.
+  - alias: "Notifikasjon strømsparing av"
+    trigger:
+      platform: state
+      entity_id: sensor.powersave
+      to: 'av'
+    action:
+      service: notify.pushover
+      data:
+        message: Strømpris har sunket til et akseptabelt nivå. Normalt strømforbruk aksepteres.
+  - alias: "Trigger hent strømpris"
+    trigger:
+      platform: state
+      entity_id: input_boolean.trigger_price_request
+      to: 'on'
+    action:
+      - service: mqtt.publish
+        data:
+          topic: power/hent
+          payload: on
+      - service: mqtt.publish
+        data:
+          topic: power/hent
+          payload: off
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.trigger_price_request

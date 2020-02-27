@@ -1,0 +1,96 @@
+################################################################
+## Packages / hjemme_borte.yaml
+## Dependencies: None
+## Created: 04.02.2019
+## Description: Styrer husstatus osv.
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      21.02.2019      Created
+## 1.0      10.12.2019      Moved to new production server
+
+# Styring av husets hjemm&borte-moduser
+input_boolean:
+  home:
+    name: Hjemme
+  work_mode:
+    name: Arbeidsdag
+    icon: mdi:briefcase
+    initial: on
+  
+  guest_mode:
+    name: Gjestemodus
+    icon: mdi:account-alert
+    initial: off
+
+  speech_notifications:
+    name: Speech Notifications
+    icon: mdi:speaker-wireless
+    initial: on
+
+  text_notifications:
+    name: Text Notifications
+    icon: mdi:cellphone-wireless
+    initial: on
+
+group:
+  husstatus:
+    name: Husstatus
+    control: hidden
+    entities:
+      - input_select.dognstatus
+      - input_boolean.home
+      - input_boolean.work_mode
+      - input_boolean.guest_mode
+      - input_boolean.speech_notifications
+      - input_boolean.text_notifications
+    
+    
+# Hjemme
+automation:
+  - alias: 'Hjemme'
+    trigger: 
+      - platform: state
+        entity_id: input_boolean.home
+        to: 'on'
+      - platform: state
+        entity_id: group.familie
+        to: 'Hjemme'
+    action:
+      - service: notify.facebook
+        data:
+          message: 'Noen kom hjem og huset er ikke lenger i bortemodus.'
+          target:
+            - '+4795969634'
+      - service: input_boolean.turn_on
+        data_template:
+          entity_id: >
+            {% if is_state('input_select.dognstatus', 'Morgen') %}
+              input_boolean.trigger_morgen
+            {% elif is_state('input_select.dognstatus', 'Formiddag') %}
+              input_boolean.trigger_formiddag
+            {% elif is_state('input_select.dognstatus', 'Ettermiddag') %}
+              input_boolean.trigger_ettermiddag
+            {% elif is_state('input_select.dognstatus', 'Kveld') %}
+              input_boolean.trigger_kveld
+            {% elif is_state('input_select.dognstatus', 'Natt') %}
+              input_boolean.trigger_natt
+            {% endif %}       
+
+            
+#Borte
+  - alias: 'Borte'
+    trigger:
+      platform: state
+      entity_id: input_boolean.home
+      to: 'off'
+    action:
+      - service: notify.facebook
+        data:
+          message: 'Sistemann dro. Huset er i bortemodus.'
+          target:
+            - '+4795969634'
+        

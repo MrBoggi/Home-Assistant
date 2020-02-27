@@ -1,0 +1,118 @@
+################################################################
+## Packages / bryggerhus.yaml
+## Dependencies: None
+## Created: 04.02.2019
+## Description: Styrer bryggerhuset
+################################################################
+
+##############################
+## Changelog
+##
+##Versjon  |   Dato       |     Beskrivelse/Kommentar
+## 0.1      21.02.2019      Created
+## 1.0      10.12.2019      Moved to new production server
+## 1.1      16.12.2019      Lagt til styring av ventilering av bryggerhuset
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+# Termostat for styring av gulvvarme. Mangler temperatur for gulvvarmen. Enhet må legges til på nytt.
+climate:
+  - platform: generic_thermostat
+    name: Gulvvarme Bryggerhus
+    heater: switch.bryggerhus_tasteroom_varme_gulvtermostat_switch
+    target_sensor: sensor.bryggerhus_temperatur
+    min_temp: 15
+    max_temp: 22
+    cold_tolerance: 0.1
+    hot_tolerance: 0
+    min_cycle_duration:
+      seconds: 5
+    keep_alive:
+      minutes: 3
+#########################################################################################################
+#   GRUPPER                                                                                             #
+#########################################################################################################
+group:
+  lys_bryggerhus:
+    name: Bryggerhus - Lys
+    control: hidden
+    entities:
+    - light.bryggerhus_bryggeri_lys_dimmer_spotter_level
+    - light.bryggerhus_tasteroom_lys_dimmer_spotter_level
+    - light.bryggerhus_tasteroom_lys_dimmer_taklys_level
+  sensorer_bryggerhus:
+    name: Bryggerhus - Sensorer
+    control: hidden
+    entities:
+    - sensor.bryggerhus_temperatur
+    - sensor.bryggerhus_rh
+    - switch.bryggerhus_bryggeri_ventilasjon_bryter_switch
+    - light.utendors_utelys_lys_dimmer_bryggerhus_level
+    - binary_sensor.bryggerhus_lekkasje_bryggeri
+    - binary_sensor.bryggerhus_lekkasje_kjokken
+
+  varmekabler_bryggerus:
+    name: Bryggerhus - Varmekabel
+    control: hidden
+    entities:
+    - switch.bryggerhus_tasteroom_varme_gulvtermostat_switch
+    - climate.gulvvarme_bryggerhus
+    - sensor.bryggerhus_tasteroom_varme_gulvtermostat_current
+    - sensor.bryggerhus_tasteroom_varme_gulvtermostat_energy
+    - sensor.bryggerhus_tasteroom_varme_gulvtermostat_power
+
+
+#########################################################################################################
+#   AUTOMASJONER                                                                                        #
+#########################################################################################################
+automation:
+  # Skru på ventilasjon ved for høy fuktighet
+  - alias: "Bryggerhus - Ventilasjon på"
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.bryggerhus_rh
+      above: '55'
+      for:
+        minutes: 3
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.bryggerhus_ventilasjon_bryggeri_switch
+      - service: notify.facebook
+        data_template:
+          message: > 
+            Ventilasjon skrudd på i bryggerhuset. Luftfuktighet er: {{ states('sensor.bryggerhus_rh') }} % 
+          target:
+            - '+4795969634'
+
+
+  # Skru av ventilasjon ved normal fuktighet
+  - alias: "Bryggerhus - Ventilasjon av"
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.bryggerhus_rh
+      below: '45'
+      for:
+        minutes: 3
+    - platform: state
+      entity_id: switch.bryggerhus_ventilasjon_bryggeri_switch
+      to: 'on'
+      from: 'off'
+      for:
+        hours: 4
+    condition:
+      - condition: state
+        entity_id: switch.bryggerhus_ventilasjon_bryggeri_switch
+        state: 'on'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.bryggerhus_ventilasjon_bryggeri_switch
+      - service: notify.facebook
+        data_template:
+          message: > 
+            Ventilasjon skrudd av i bryggerhuset. Luftfuktighet er: {{ states('sensor.bryggerhus_rh') }} %
+          target:
+            - '+4795969634'

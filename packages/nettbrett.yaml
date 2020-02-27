@@ -1,0 +1,109 @@
+############################################################
+#
+# mqtt Sensors
+#
+############################################################
+sensor:
+  - platform: mqtt
+    state_topic: "zanzito/NettbrettKjokken/battery_level"
+    name: "Nettbrett Kjøkken Batteri"
+    qos: 0
+    unit_of_measurement: "%"
+
+  - platform: mqtt
+    state_topic: "zanzito/NettbrettHall/battery_level"
+    name: "Nettbrett Hall Batteri"
+    qos: 0
+    unit_of_measurement: "%"
+
+  - platform: mqtt
+    state_topic: "zanzito/NettbrettLoftstue/battery_level"
+    name: "Nettbrett Loftstue Batteri"
+    qos: 0
+    unit_of_measurement: "%"
+
+group:
+  nettbrett:
+    name: Nettbrett
+    control: hidden
+    entities:
+      - sensor.nettbrett_kjokken_batteri
+      - switch.e1_kjokken_nettbrett_veggbryter_switch
+      - sensor.nettbrett_hall_batteri 
+      - switch.e1_hall_nettbrett_veggbryter_switch
+      - sensor.nettbrett_loftstue_batteri 
+      - switch.e2_loftstue_nettbrett_veggbryter_switch
+
+
+############################################################
+#
+# Start lading av nettbrett
+#
+############################################################
+# Nettbrett kjøkken
+automation: 
+  - alias: "Lad Nettbrett Kjøkken"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.nettbrett_kjokken_batteri 
+        below: 22
+      - platform: time
+        at: '05:30:00'
+    action:
+      service: switch.turn_on
+      entity_id: switch.e1_kjokken_nettbrett_veggbryter_switch
+
+# Nettbrett Hall      
+  - alias: "Lad Nettbrett Hall"
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.nettbrett_hall_batteri 
+      below: 22
+    action:
+      service: switch.turn_on
+      entity_id: switch.e1_hall_nettbrett_veggbryter_switch
+
+# Nettbrett Loftstue
+  - alias: "Lad Nettbrett loftstue"
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.nettbrett_loftstue_batteri 
+      below: 22
+    action:
+      service: switch.turn_on
+      entity_id: switch.e2_loftstue_nettbrett_veggbryter_switch
+
+############################################################
+#
+# Avslutt lading av nettbrett
+#
+############################################################
+# Nettbrett kjøkken
+  - alias: "Stopp Nettbrett Kjøkken"
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.nettbrett_kjokken_batteri 
+      above: 98
+    action:
+      service: switch.turn_off
+      entity_id: switch.e1_kjokken_nettbrett_veggbryter_switch
+
+# Nettbrett Hall
+  - alias: "Stopp Nettbrett Hall"
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.nettbrett_hall_batteri 
+      above: 98
+    action:
+      service: switch.turn_off
+      entity_id: switch.e1_hall_nettbrett_veggbryter_switch
+
+# Nettbrett Loftstue
+  - alias: "Stopp Nettbrett Loftstue"
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.nettbrett_loftstue_batteri 
+      above: 98
+    action:
+      service: switch.turn_off
+      entity_id: switch.e2_loftstue_nettbrett_veggbryter_switch

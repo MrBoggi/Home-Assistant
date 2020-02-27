@@ -1,0 +1,403 @@
+################################################################
+## Packages / lyspakker.yaml
+## Dependencies: None
+## Created: 04.02.2019
+## Note: Inneholder forskjellige "scener" for lyssetting. Feks. Morgen/Kveld, Natt, Formiddag, TV-titting, middag osv.
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      04.02.2019      Created
+## 1.0      10.12.2019      Added to new production server
+## 1.0.1    26.12.2019      Økt tid på lys bad 1.etasje fra 2 til 8 minutter
+## 1.0.2    06.01.2020      Justert tid på lys bad 1.etasje fra 8 til 5 minutter
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+    
+input_boolean:
+  trigger_morgen:
+    name: Skru på morgenbelysning ved hjemkomst
+  trigger_formiddag:
+    name: Skru på formiddagsbelysning ved hjemkomst
+  trigger_ettermiddag:
+    name: Skru på ettermiddagsbelysning ved hjemkomst
+  trigger_kveld:
+    name: Skru på kveldsbelysning ved hjemkomst
+  trigger_natt:
+    name: Skru på nattbelysning ved hjemkomst
+
+    
+#########################################################################################################
+#   GRUPPER                                                                                             #
+#########################################################################################################
+group:
+  hjemkomsttriggere:
+    name: Hjemkonsttriggere
+    control: hidden
+    entities:
+      - input_boolean.trigger_morgen
+      - input_boolean.trigger_formiddag
+      - input_boolean.trigger_ettermiddag
+      - input_boolean.trigger_kveld
+      - input_boolean.trigger_natt
+
+  utelys:
+    name: Utelys
+    entities:
+      - light.utendors_utelys_lys_dimmer_inngangsparti_level
+      - sensor.utendors_utelys_lys_dimmer_inngangsparti_power
+      - sensor.utendors_utelys_lys_dimmer_inngangsparti_energy
+      - light.utendors_utelys_lys_dimmer_hushjorner_level
+      - sensor.utendors_utelys_lys_dimmer_hushjorner_power
+      - sensor.utendors_utelys_lys_dimmer_hushjorner_energy
+      - light.utendors_utelys_lys_dimmer_veranda_level
+      - sensor.utendors_utelys_lys_dimmer_veranda_power
+      - sensor.utendors_utelys_lys_dimmer_veranda_energy
+      - light.utendors_utelys_lys_dimmer_bryggerhus_level
+      - sensor.utendors_utelys_lys_dimmer_bryggerhus_power
+      - sensor.utendors_utelys_lys_dimmer_bryggerhus_energy
+
+  pyntelys:
+    name: Pyntelys
+    entities:
+    - switch.e1_stue_lys_bryter_lampesjenk_switch
+    - switch.e1_spisestue_lys_bryter_vindusor_switch
+    - switch.e1_stue_lys_bryter_vindunord_switch
+  # lux:
+  #   name: Lysstyrke
+  #   entities:
+  #   - sensor.e1_hall_deteksjon_bevegelsessensor_luminance
+  #   - sensor.e2_bod_deteksjon_bevegelsessensor_luminance
+  #   - sensor.e1_stue_deteksjon_bevegelsessensor_luminance
+  #   - sensor.e2_loftstue_deteksjon_bevegelsessensor_luminance
+
+
+#########################################################################################################
+#   SCENER                                                                                              #
+#########################################################################################################
+scene:
+  - name: grunnbelysning
+    entities:
+      light.e2_trapp_lys_dimmer_takspotter_level:
+        state: true
+        brightness: 50
+      light.e1_hall_lys_dimmer_takspotter_level:
+        state: true
+        brightness: 50
+      light.e2_bad_lys_dimmer_takspotter_level:
+        state: true
+        brightness_pct: 80
+      light.e1_kjokken_lys_dimmer_benkelys_level:
+        state: true
+        brightness: 100
+      light.e1_kjokken_lys_dimmer_pyntelys_level:
+        state: true
+        brightness: 100
+      light.e1_kjokken_lys_dimmer_benkespotter_level:
+        state: true
+        brightness_pct: 100
+      light.e1_midtstue_lys_dimmer_takspotter_level:
+        state: true
+        brightness_pct: 100
+
+
+
+#########################################################################################################
+#   AUTOMASJONER                                                                                        #
+#########################################################################################################
+automation:
+       
+#--------------------------Styring av lys bod 2.etasje
+# Skrur på lys i bod ved bevegelse
+    - alias: "Lys bod på"
+      trigger:
+        platform: state
+        entity_id: binary_sensor.e2_bod_deteksjon_bevegelsessensor_sensor
+        to: 'on'
+      action:
+        service: switch.turn_on
+        entity_id: switch.e2_bod_lys_bryter_taklys_switch
+
+# Skrur av lys i bod 2 min etter siste bevegelse
+    - alias: "Lys bod av"
+      trigger:
+        platform: state
+        entity_id: binary_sensor.e2_bod_deteksjon_bevegelsessensor_sensor
+        to: 'off'
+        for:
+          minutes: 2
+      action:
+        service: switch.turn_off
+        entity_id: switch.e2_bod_lys_bryter_taklys_switch
+
+#-------------------------- Styring av utelys
+# Skrur på utelyset 30 minutter før solnedgang.
+# I tillegg sendes det en notifikasjon via pushover.
+    - alias: "Skru på utelys"
+      trigger:
+        platform: sun
+        event: sunset
+        offset: "-00:20:00"
+      action:
+        - service: light.turn_on
+          data:
+            brightness: 100
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_inngangsparti_level
+        - service: light.turn_on
+          data:
+            brightness: 100
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_hushjorner_level
+        - service: light.turn_on
+          data:
+            brightness: 100
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_veranda_level
+        - service: light.turn_on
+          data:
+            brightness: 100
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_bryggerhus_level
+        - service: notify.facebook
+          data:
+            message: 'Utelys skrudd på.'
+            target:
+              - '+4795969634'
+  
+# Skrur av utelyset 45 minutter etter soloppgang.
+# I tillegg sendes det notifikasjon via slack. 
+    - alias: "Skru av utelys"
+      trigger:
+        platform: sun
+        event: sunrise
+        offset: "+00:30:00"
+      action:
+        - service: light.turn_off
+          data:
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_inngangsparti_level
+        - service: light.turn_off
+          data:
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_hushjorner_level
+        - service: light.turn_off
+          data:
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_veranda_level
+        - service: light.turn_off
+          data:
+            entity_id: 
+            - light.utendors_utelys_lys_dimmer_bryggerhus_level
+        - service: notify.facebook
+          data:
+            message: 'Utelys skrudd av.'
+            target:
+              - '+4795969634'
+        
+    
+#--------------------------Styring av lys på badet i 1.etasje
+# Skru på lys ved bevegelse
+    - alias: "Lys bad 1.etg på"
+      trigger:
+        platform: state
+        entity_id: binary_sensor.e1_bad_deteksjon_bevegelsessensor_sensor
+        to: 'on'
+      action:
+        service: switch.turn_on
+        entity_id: switch.e1_bad_lys_bryter_taklys_switch
+
+# Skru av lys 5 min etter siste bevegelse registrert.    
+    - alias: "Lys bad 1.etg av"
+      trigger:
+        platform: state
+        entity_id: binary_sensor.e1_bad_deteksjon_bevegelsessensor_sensor
+        to: 'off'
+        for:
+          minutes: 5
+      action:
+        service: switch.turn_off
+        entity_id: switch.e1_bad_lys_bryter_taklys_switch
+
+
+#--------------------------Styring av trappelys
+    - alias: "Lys trapp"
+      trigger: 
+        - platform: state
+          entity_id: binary_sensor.e2_trapp_lys_dimmer_takspotter_sensor
+          to: 'on'
+      action:
+        - service: light.toggle
+          entity_id: light.e2_trapp_lys_dimmer_takspotter_level
+
+#--------------------------Styring av morgenbelysning
+    - alias: "Lyspakke - Lys Morgen"
+      trigger:
+        - platform: state
+          entity_id: input_select.dognstatus
+          to: 'Morgen'
+        - platform: state
+          entity_id: input_boolean.good_morning
+          to: 'on'
+          from: 'off'
+        - platform: state
+          entity_id: input_boolean.trigger_morgen
+          to: 'on'
+          from: 'off'
+      condition:
+        condition: and
+        conditions: 
+          - condition: state
+            entity_id: input_boolean.home
+            state: 'on'
+      action:
+        - service: input_boolean.turn_off
+          entity_id: input_boolean.trigger_morgen
+        - service: input_boolean.turn_off
+          entity_id: input_boolean.good_morning
+        - service: scene.turn_on
+          entity_id: scene.grunnbelysning          
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e1_stue_lys_bryter_lampesjenk_switch
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e1_spisestue_lys_bryter_vindusor_switch
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e1_stue_lys_bryter_vindunord_switch
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e2_loftstue_lys_bryter_lysslynge_switch
+ 
+#--------------------------Formiddagsbelysning 
+    - alias: "Lyspakke - Lys Formiddag"
+      trigger:
+        - platform: state
+          entity_id: input_select.dognstatus
+          to: 'Formiddag'
+        - platform: state
+          entity_id: input_boolean.trigger_formiddag
+          to: 'on'
+          from: 'off'
+      condition:
+        condition: and
+        conditions: 
+          - condition: state
+            entity_id: input_boolean.home
+            state: 'on'
+      action:
+        - service: input_boolean.turn_off
+          entity_id: input_boolean.trigger_formiddag
+        - service: scene.turn_on
+          entity_id: scene.grunnbelysning          
+        - service: switch.turn_off
+          data:
+            entity_id: switch.e1_stue_lys_bryter_lampesjenk_switch
+        - service: switch.turn_off
+          data:
+            entity_id: switch.e1_spisestue_lys_bryter_vindusor_switch
+        - service: switch.turn_off
+          data:
+            entity_id: switch.e1_stue_lys_bryter_vindunord_switch
+
+#--------------------------Kveldsbelysning 
+    - alias: "Lyspakke - Lys Kveld"
+      trigger:
+        - platform: state
+          entity_id: input_select.dognstatus
+          to: 'Kveld'
+        - platform: state
+          entity_id: input_boolean.trigger_kveld
+          to: 'on'
+          from: 'off'
+      condition:
+        condition: and
+        conditions: 
+          - condition: state
+            entity_id: input_boolean.home
+            state: 'on'
+      action:
+        - service: input_boolean.turn_off
+          entity_id: input_boolean.trigger_kveld
+        - service: scene.turn_on
+          entity_id: scene.grunnbelysning          
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e1_stue_lys_bryter_lampesjenk_switch
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e1_spisestue_lys_bryter_vindusor_switch
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e1_stue_lys_bryter_vindunord_switch
+        - service: switch.turn_on
+          data:
+            entity_id: switch.e2_loftstue_lys_bryter_lysslynge_switch
+        - service: light.turn_on
+          data:
+            brightness_pct: 27
+            entity_id: 
+            - light.e2_loftstue_lys_dimmer_takspotter_level
+            
+#--------------------------Demp lys loftstue
+    - alias: "Lyspakke - Demp Lys Loftstue"
+      trigger: 
+      - platform: time  
+        at: "18:44:00"
+      action:
+        - service: light.turn_on
+          data:
+            brightness_pct: 15
+            entity_id: 
+            - light.e2_loftstue_lys_dimmer_takspotter_level
+
+          
+#--------------------------Skru av alle lys
+    - alias: "Lyspakke - Lys Av"
+      trigger:
+        - platform: state
+          entity_id: input_boolean.good_night
+          to: 'on'
+          from: 'off'
+        - platform: state
+          entity_id: input_boolean.home
+          to: "off"
+
+      action:
+        - service: input_boolean.turn_off
+          entity_id: input_boolean.good_night
+        - service: light.turn_off
+          entity_id:
+            - light.e1_vaskerom_lys_dimmer_taklys_level
+            - light.e2_trapp_lys_dimmer_takspotter_level
+            - light.e1_teknisk_lys_dimmer_taklys_level
+            - light.e1_stue_lys_dimmer_taklys_level
+            - light.e1_stue_lys_dimmer_takspotter_level
+            - light.e1_spisestue_lys_dimmer_taklys_level
+            - light.e1_spisestue_lys_dimmer_takspotter_level
+            - light.e2_master_lys_dimmer_takspotter_level
+            - light.e2_kontor_lys_dimmer_level
+            - light.e1_midtstue_lys_dimmer_takspotter_level
+            - light.e1_kjokken_lys_dimmer_takspotter_level
+            - light.e1_kjokken_lys_dimmer_pyntelys_level
+            - light.e1_kjokken_lys_dimmer_benkespotter_level
+            - light.e1_kjokken_lys_dimmer_benkelys_level
+            - light.e1_hall_lys_dimmer_takspotter_level
+            - light.e2_loftstue_lys_dimmer_takspotter_level
+            - light.e2_emil_lys_dimmer_takspotter_level
+            - light.e2_bad_lys_dimmer_takspotter_level
+        - service: switch.turn_off
+          entity_id:
+            - switch.e1_stue_lys_bryter_vindunord_switch
+            - switch.e1_stue_lys_bryter_lampesjenk_switch
+            - switch.e1_spisestue_lys_bryter_vindusor_switch
+            - switch.e1_bad_lys_bryter_taklys_switch
+            - switch.e2_bod_lys_bryter_taklys_switch
+            - switch.e2_loftstue_lys_bryter_lysslynge_switch
+            - switch.e1_stue_lys_bryter_stalampe

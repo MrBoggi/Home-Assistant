@@ -1,0 +1,279 @@
+################################################################
+## Packages / vaskerom.yaml
+## Dependencies: None
+## Created: 04.02.2019
+## Description: Styrer vaskerommet og dets sensorer.
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      04.02.2019      Created
+## 0.2      14.03.2019      Fixed sensors vaskaktiv&torkativ.
+## 1.0      10.12.2019      Moved to new production server
+## 1.1      26.02.2020      Added functionality for displaying washingmachine and dryer status and other related information.
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+  - platform: statistics
+    entity_id: sensor.e1_vaskerom_energi_drifttorketrommel_energy
+    name: Vaskerom Tørketrommel Stat
+  - platform: statistics
+    entity_id: sensor.e1_vaskerom_energi_driftvaskemaskin_energy
+    name: Vaskerom Vaskemaskin Stat
+  - platform: template
+    sensors:
+      vaskaktiv:
+        friendly_name: "Vaskemaskin aktiv"
+        value_template: >-
+          {% if states.sensor.e1_vaskerom_energi_driftvaskemaskin_power.state|float > 5.0 %}
+            1
+          {% elif  states.sensor.e1_vaskerom_energi_driftvaskemaskin_power.state|float < 5.0 %}
+            0
+          {% endif %}
+      torkaktiv:
+        friendly_name: "Tørketrommel aktiv"
+        value_template: >-
+          {% if states.sensor.e1_vaskerom_energi_drifttorketrommel_power.state|float > 5.0 %}
+            1
+          {% elif  states.sensor.e1_vaskerom_energi_drifttorketrommel_power.state|float < 5.0 %}
+            0
+          {% endif %}
+      vasketid_rounded:
+        friendly_name: "Vasketid"
+        value_template: "{% set hours = states('sensor.Vasketid') | float %} 
+        {% set minutes = ((hours % 1) * 60) | int %}  
+        {% set hours = (hours - (hours % 1)) | int %}  
+        {{ '%02i:%02i'%(hours, minutes) }}"
+
+      torketid_rounded:
+        friendly_name: "Tørketid"
+        value_template: "{% set hours = states('sensor.torketid') | float %} 
+        {% set minutes = ((hours % 1) * 60) | int %}  
+        {% set hours = (hours - (hours % 1)) | int %}  
+        {{ '%02i:%02i'%(hours, minutes) }}"
+  
+  - platform: history_stats
+    name: Vasketid
+#    icon: mdi:clock-outline
+    entity_id: input_select.status_vaskemaskin
+    state: 'Vasker'
+    type: time
+    start: '{{ as_timestamp(states.input_select.status_vaskemaskin.last_changed) }}'
+    end: '{{ now() }}'
+
+    name: torketid
+#    icon: mdi:clock-outline
+    entity_id: input_select.status_torkemaskin
+    state: 'Tørker'
+    type: time
+    start: '{{ as_timestamp(states.input_select.status_torketrommel.last_changed) }}'
+    end: '{{ now() }}'
+#########################################################################################################
+#   INPUT_DATETIME                                                                                      #
+#########################################################################################################
+input_datetime:
+  vask_sist_startet:
+    name: Vaskemaskin sist startet
+    has_date: true
+    has_time: true
+    icon: mdi:washing-machine
+  tork_sist_startet:
+      name: Tørketrommel sist startet
+      has_date: true
+      has_time: true
+      icon: mdi:tumble-dryer
+  vask_sist_stoppet:
+    name: Vaskemaskin sist avsluttet
+    has_date: true
+    has_time: true
+    icon: mdi:washing-machine-off
+  tork_sist_stoppet:
+      name: Tørketrommel sist avsluttet
+      has_date: true
+      has_time: true
+      icon: mdi:tumble-dryer-off
+            
+input_boolean:
+    
+input_select:
+  status_vaskemaskin:
+    name: Status Vaskemaskin
+    options:
+      - Vasker
+      - Ikke i bruk
+    initial: Ikke i bruk
+    icon: mdi:washing-machine
+  status_torketrommel:
+    name: Status Tørketrommel
+    options:
+      - Tørker
+      - Ikke i bruk
+    initial: Ikke i bruk
+    icon: mdi:tumble-dryer
+     
+#########################################################################################################
+#   GRUPPER                                                                                             #
+#########################################################################################################
+group:
+  vaskemaskin:
+    name: Vaskemaskin&Tørketrommel
+    control: hidden
+    entities:
+      - input_select.status_vaskemaskin
+      - sensor.vasketid_rounded
+      - input_datetime.vask_sist_startet
+      - input_datetime.vask_sist_stoppet
+      - sensor.e1_vaskerom_energi_driftvaskemaskin_power
+      - sensor.e1_vaskerom_energi_driftvaskemaskin_energy
+      - sensor.vaskaktiv
+      - input_select.status_torketrommel
+      - sensor.torketid_rounded
+      - input_datetime.tork_sist_startet
+      - input_datetime.tork_sist_stoppet
+      - sensor.e1_vaskerom_energi_drifttorketrommel_energy
+      - sensor.e1_vaskerom_energi_drifttorketrommel_power
+      - sensor.torkaktiv
+  forbrukere:
+    entities:
+      - sensor.vaskaktiv
+      - sensor.torkaktiv
+
+#########################################################################################################
+#   AUTOMASJONER                                                                                        #
+#########################################################################################################
+automation:
+#####################################################      
+# Vaskemaskin                                       #
+#####################################################      
+- alias: Vaskerom - Vask startet
+  trigger:
+    platform: state
+    entity_id: sensor.vaskaktiv
+    from: '0'
+    to: '1'
+    for:
+      seconds: 10
+  condition:
+    condition: state
+    entity_id: 'input_select.status_vaskemaskin'
+    state: 'Ikke i bruk'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.status_vaskemaskin
+        option: Vasker
+
+- alias: Vaskerom - Vask avsluttet
+  trigger:
+    platform: state
+    entity_id: sensor.vaskaktiv
+    from: '1'
+    to: '0'
+    for:
+      seconds: 30
+  condition:
+    condition: state
+    entity_id: 'input_select.status_vaskemaskin'
+    state: 'Vasker'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.status_vaskemaskin
+        option: Ikke i bruk
+      
+- alias: Vaskerom - Vask sist startet
+  trigger:
+    platform: state
+    entity_id: input_select.status_vaskemaskin
+    from: 'Ikke i bruk'
+    to: 'Vasker'
+  action:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.vask_sist_startet
+        time: '{{ (as_timestamp(now()) | timestamp_custom("%H:%M:%S", true)) }}'
+        date: '{{ (as_timestamp(now()) | timestamp_custom("%Y-%m-%d", true)) }}'
+
+- alias: Vaskerom - Vask sist stoppet
+  trigger:
+    platform: state
+    entity_id: input_select.status_vaskemaskin
+    from: 'Vasker'
+    to: 'Ikke i bruk'
+  action:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.vask_sist_stoppet
+        time: '{{ (as_timestamp(now()) | timestamp_custom("%H:%M:%S", true)) }}'
+        date: '{{ (as_timestamp(now()) | timestamp_custom("%Y-%m-%d", true)) }}'
+
+#####################################################      
+# Tørketrommel                                      #
+#####################################################      
+- alias: Vaskerom - Tørk startet
+  trigger:
+    platform: state
+    entity_id: sensor.torkaktiv
+    from: '0'
+    to: '1'
+    for:
+      seconds: 10
+  condition:
+    condition: state
+    entity_id: 'input_select.status_torketrommel'
+    state: 'Ikke i bruk'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.status_torketrommel
+        option: Tørker
+
+- alias: Vaskerom - Tørk avsluttet
+  trigger:
+    platform: state
+    entity_id: sensor.torkaktiv
+    from: '1'
+    to: '0'
+    for:
+      seconds: 30
+  condition:
+    condition: state
+    entity_id: 'input_select.status_torketrommel'
+    state: 'Tørker'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.status_torketrommel
+        option: Ikke i bruk
+  
+      
+- alias: Vaskerom - Tørk sist startet
+  trigger:
+    platform: state
+    entity_id: input_select.status_torketrommel
+    from: 'Ikke i bruk'
+    to: 'Tørker'
+  action:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.tork_sist_startet
+        time: '{{ (as_timestamp(now()) | timestamp_custom("%H:%M:%S", true)) }}'
+        date: '{{ (as_timestamp(now()) | timestamp_custom("%Y-%m-%d", true)) }}'
+
+- alias: Vaskerom - Tørk sist stoppet
+  trigger:
+    platform: state
+    entity_id: input_select.status_torketrommel
+    from: 'Tørker'
+    to: 'Ikke i bruk'
+  action:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.tork_sist_stoppet
+        time: '{{ (as_timestamp(now()) | timestamp_custom("%H:%M:%S", true)) }}'
+        date: '{{ (as_timestamp(now()) | timestamp_custom("%Y-%m-%d", true)) }}'
+      

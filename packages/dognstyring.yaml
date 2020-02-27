@@ -1,0 +1,170 @@
+################################################################
+## Packages / dognstyring.yaml
+## Dependencies: None
+## Created: 04.02.2019
+## Description: Styrer døgnstatusene. Setter hver enkelt status
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      04.02.2019      Created
+## 1.0      10.12.2019      Added to new production server
+## 1.0.1    17.12.2019      Fixed "Formiddag"-trigger. Now working
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+input_select:
+  dognstatus:
+      name: Døgnstatus
+      options:
+        - Morgen
+        - Formiddag
+        - Dag
+        - Ettermiddag
+        - Kveld
+        - Natt  
+
+#########################################################################################################
+#   GRUPPER                                                                                             #
+#########################################################################################################
+group:
+
+#########################################################################################################
+#   AUTOMASJONER                                                                                        #
+#########################################################################################################
+automation:
+# Kode for å lagre og hente ut døgnstatus. Benyttes ved f.eks restart for å ta vare på forrige verdi.
+  - alias: Set døgnstatus Selector
+    trigger:
+      platform: mqtt
+      topic: "dognstatus"
+    action:
+       service: input_select.select_option
+       data_template:
+        entity_id: input_select.dognstatus
+        option: "{{ trigger.payload }}"
+
+  - alias: Set døgnstatus
+    trigger:
+      platform: state
+      entity_id: input_select.dognstatus
+    action:
+      service: mqtt.publish
+      data_template:
+        topic: "dognstatus"
+        retain: true
+        payload: "{{ states('input_select.dognstatus') }}"
+
+
+
+
+
+  - alias: "Døgnstyring - Morgen"
+    trigger: 
+      - platform: state
+        entity_id: binary_sensor.e2_loftstue_deteksjon_bevegelsessensor_sensor
+        to: 'on'
+    condition:
+      condition: and
+      conditions: 
+        - condition: time
+          after: '05:30:00'
+          before: '12:00:00'
+        - condition: time
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+        - condition: state
+          entity_id: input_select.dognstatus
+          state: 'Natt'
+    action:
+    - service: input_select.select_option
+      data: 
+        entity_id: input_select.dognstatus
+        option: Morgen
+    - service: notify.facebook
+      data:
+        message: 'God morgen!!! Huset er i morgenmodus'
+        target:
+          - '+4795969634'
+
+  - alias: "Døgnstyring - Formiddag"
+    trigger: 
+      platform: numeric_state
+      entity_id: sun.sun
+      value_template: "{{ state_attr('sun.sun', 'elevation') }}"
+      above: 4.0
+    condition:
+      condition: state
+      entity_id: 'input_select.dognstatus'
+      state: 'Morgen'
+    action:
+    - service: input_select.select_option
+      data: 
+        entity_id: input_select.dognstatus
+        option: Formiddag
+    - service: notify.facebook
+      data:
+        message: 'Formiddag!!! Nå har sola kommet så høyt på himmelen at morgenen er over'
+        target:
+          - '+4795969634'
+
+  - alias: "Døgnstyring - Kveld"
+    trigger: 
+      platform: numeric_state
+      entity_id: sun.sun
+      value_template: "{{ state_attr('sun.sun', 'elevation') }}"
+      below: 4.0
+    condition:
+      condition: and
+      conditions: 
+        - condition: time
+          after: '12:30:00'
+          before: '22:00:00'
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: input_select.dognstatus
+            state: 'Formiddag'
+          - condition: state
+            entity_id: input_select.dognstatus
+            state: 'morgen'
+    action:
+    - service: input_select.select_option
+      data: 
+        entity_id: input_select.dognstatus
+        option: Kveld
+    - service: notify.facebook
+      data:
+        message: 'Kvelden kommer!!! Sola faller på himmelen og nå blir det mørkt'
+        target:
+          - '+4795969634'
+   
+  - alias: "Døgnstyring - Natt"
+    trigger:
+      platform: state
+      entity_id: input_boolean.good_night
+      to: 'on'
+      from: 'off'
+    action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.good_night
+    - service: input_select.select_option
+      data: 
+        entity_id: input_select.dognstatus
+        option: Natt
+    - service: notify.facebook
+      data:
+        message: 'ZZzzzzZzZzzz'
+        target:
+          - '+4795969634'
+

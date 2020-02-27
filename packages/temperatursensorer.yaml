@@ -1,0 +1,92 @@
+################################################################
+## Packages / temperatursensorer.yaml
+## Dependencies: None
+## Created: 04.02.2019
+## Note: Strømrelatert
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      04.02.2019      Created
+## 1.0      10.12.2019      Added to new production server
+## 1.0.1    06.01.2020      Lagt til sist endret for bevegelsessensor bod
+## 1.0.2    24.02.2020      Endret sensornavn for bevegelsessensor hall - sist endret. Feil navn
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+- platform: template
+  sensors:
+    # Sist endret 1.etasje
+    e1_stue_deteksjon_roykvarsler_temperature_last_changed:
+      friendly_name: "Stue Røykvarsler - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e1_stue_deteksjon_roykvarsler_temperature.last_changed) | timestamp_local}}"
+    e1_stue_deteksjon_bevegelse_temperature_last_changed:
+      friendly_name: "Stue Bevegelse - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e1_stue_deteksjon_bevegelsessensor_temperature.last_changed) | timestamp_local}}"
+    e1_spisestue_deteksjon_roykvarsler_temperature_last_changed:
+      friendly_name: "Spisestue Røykvarsler - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e1_spisestue_deteksjon_roykvarsler_temperature.last_changed) | timestamp_local}}"
+    e1_hall_deteksjon_bevegelse_temperature_last_changed:
+      friendly_name: "Hall Bevegelse - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e1_hall_deteksjon_bevegelsessensor_temperature.last_changed) | timestamp_local}}"
+
+    e1_stue_temperature_avg:
+      friendly_name: "Stue Temperatur"
+      value_template: "{{  ((float(states.sensor.e1_stue_deteksjon_bevegelsessensor_temperature.state)+float(states.sensor.e1_stue_deteksjon_roykvarsler_temperature.state)+float(states.sensor.e1_spisestue_deteksjon_roykvarsler_temperature.state))/3)|round(1) }}"
+      unit_of_measurement: '°C'
+    #Sist endret 2.etasje
+    e2_bod_deteksjon_roykvarsler_temperature_last_changed:
+      friendly_name: "Bod Røykvarsler - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e2_bod_deteksjon_roykvarsler_temperature.last_changed) | timestamp_local}}"
+    e2_bod_deteksjon_bevegelsessensor_temperature_last_changed:
+      friendly_name: "Bod Bevegelse - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e2_bod_deteksjon_bevegelsessensor_temperature.last_changed) | timestamp_local}}"
+    e2_master_deteksjon_roykvarsler_temperature_last_changed:
+      friendly_name: "Master Røykvarsler - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e2_master_deteksjon_roykvarsler_temperature.last_changed) | timestamp_local}}"
+    e2_kontor_deteksjon_roykvarsler_temperature_last_changed:
+      friendly_name: "Kontor Røykvarsler - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e2_kontor_deteksjon_roykvarsler_temperature.last_changed) | timestamp_local}}"
+    e2_loftstue_deteksjon_roykvarsler_temperature_last_changed:
+      friendly_name: "Loftstue Røykvarsler - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e2_loftstue_deteksjon_roykvarsler_temperature.last_changed) | timestamp_local}}"
+    e2_loftstue_deteksjon_bevegelse_temperature_last_changed:
+      friendly_name: "Loftstue Bevegelse - Temperatur - Sist endret"
+      value_template: "{{as_timestamp(states.sensor.e2_loftstue_deteksjon_bevegelsessensor_temperature.last_changed) | timestamp_local}}"
+
+
+      
+ 
+group:
+  1.etasje:
+    name: 1. Etasje - Temperaturer
+    entities:
+      - sensor.e1_hall_deteksjon_bevegelsessensor_temperature
+      - sensor.e1_hall_deteksjon_bevegelse_temperature_last_changed
+      - sensor.e1_stue_deteksjon_roykvarsler_temperature
+      - sensor.e1_stue_deteksjon_roykvarsler_temperature_last_changed
+      - sensor.e1_stue_deteksjon_bevegelsessensor_temperature
+      - sensor.e1_stue_deteksjon_bevegelse_temperature_last_changed
+      - sensor.e1_spisestue_deteksjon_roykvarsler_temperature
+      - sensor.e1_spisestue_deteksjon_roykvarsler_temperature_last_changed
+      - sensor.e1_stue_temperature_avg
+  2.etasje:
+    name: 2. Etasje - Temperaturer
+    entities:
+      - sensor.e2_bod_deteksjon_roykvarsler_temperature
+      - sensor.e2_bod_deteksjon_roykvarsler_temperature_last_changed
+      - sensor.e2_bod_deteksjon_bevegelsessensor_temperature
+      - sensor.e2_bod_deteksjon_bevegelsessensor_temperature_last_changed
+      - sensor.e2_kontor_deteksjon_roykvarsler_temperature
+      - sensor.e2_kontor_deteksjon_roykvarsler_temperature_last_changed
+      - sensor.e2_loftstue_deteksjon_roykvarsler_temperature
+      - sensor.e2_loftstue_deteksjon_roykvarsler_temperature_last_changed
+      - sensor.e2_loftstue_deteksjon_bevegelsessensor_temperature
+      - sensor.e2_loftstue_deteksjon_bevegelse_temperature_last_changed
+      - sensor.e2_master_deteksjon_roykvarsler_temperature
+      - sensor.e2_master_deteksjon_roykvarsler_temperature_last_changed
+
+automation:

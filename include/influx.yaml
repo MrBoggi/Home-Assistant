@@ -1,0 +1,104 @@
+################################################################
+## Packages / influx.yaml
+## Dependencies: None
+## Created: 18.02.2020
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 1.0       18.02.2020         Created
+## 1.0.1     20.02.2020         Added some sensors. Will bli implemented after next restart
+
+host: 192.168.1.115
+port: 8086
+database: home_assistant
+username: hassio
+password:  !secret influxpass
+#ssl: true
+#verify_ssl: true
+max_retries: 3
+default_measurement: state
+exclude:
+    domains:
+        - automation
+include:
+    entities:
+        # Temperaturer
+            # Bryggerhus
+        - sensor.bryggerhus_temperatur
+        - sensor.bryggerhus_rh
+        - switch.bryggerhus_bryggeri_ventilasjon_bryter_switch
+            # 1.Etasje
+        - sensor.e1_bad_deteksjon_bevegelsessensor_temperature
+        - sensor.e1_bad_lys_bryter_taklys_temperature
+        - sensor.e1_bad_varme_gulvtermostat_temperature
+        - sensor.e1_hall_deteksjon_bevegelsessensor_temperature
+        - sensor.e1_hall_lys_dimmer_takspotter_temperature_2
+        - sensor.e1_hall_varme_gulvtermostat_temperature
+        - sensor.e1_kjokken_deteksjon_lekkasjesensor_oppvaskmaskin_temperature
+        - sensor.e1_kjokken_deteksjon_lekkasjesensor_utekran_temperature
+        - sensor.e1_kjokken_lys_dimmer_benkespotter_temperature_2
+        - sensor.e1_kjokken_lys_dimmer_pyntelys_temperature_2
+        - sensor.e1_kjokken_lys_dimmer_takspotter_temperature_2
+        - sensor.e1_spisestue_deteksjon_roykvarsler_temperature
+        - sensor.e1_spisestue_lys_dimmer_taklys_temperature_2
+        - sensor.e1_spisestue_lys_dimmer_takspotter_temperature_2
+        - sensor.e1_spisestue_varme_gulvtermostat_temperature
+        - sensor.e1_stue_deteksjon_bevegelsessensor_temperature
+        - sensor.e1_stue_deteksjon_roykvarsler_temperature
+        - sensor.e1_stue_varme_gulvtermostat_temperature
+        - sensor.e1_teknisk_deteksjon_lekkasjesensor_temperature
+        - sensor.e1_teknisk_deteksjon_roykvarsler_temperature
+        - sensor.e1_vaskerom_deteksjon_roykvarsler_temperature
+        - sensor.e1_vaskerom_varme_gulvtermostat_temperature
+            # 2.Etasje
+        - sensor.e2_bad_lys_dimmer_takspotter_temperature_2
+        - sensor.e2_bad_varme_gulvtermostat_temperature
+        - sensor.e2_bod_deteksjon_bevegelsessensor_temperature
+        - sensor.e2_bod_deteksjon_roykvarsler_temperature
+        - sensor.e2_bod_lys_bryter_taklys_temperature
+        - sensor.e2_bod_varme_gulvtermostat_temperature
+        - sensor.e2_kontor_deteksjon_roykvarsler_temperature
+        - sensor.e2_kontor_varme_gulvtermostat_temperature
+        - sensor.e2_loftstue_deteksjon_bevegelsessensor_temperature
+        - sensor.e2_loftstue_deteksjon_roykvarsler_temperature
+        - sensor.e2_loftstue_lys_dimmer_takspotter_temperature
+        - sensor.e2_loftstue_varme_gulvtermostat_temperature
+        - sensor.e2_master_deteksjon_roykvarsler_temperature
+        - sensor.e2_master_varme_gulvtermostat_temperature
+        - sensor.e2_trapp_lys_dimmer_takspotter_temperature
+        # Batterinivå
+        - sensor.bryggerhus_lekkasje_bryggeri_battery_level
+        - sensor.bryggerhus_lekkasje_kjokken_battery_level
+        - sensor.bryggerhus_sensor1_battery_level
+        - sensor.e1_bad_deteksjon_bevegelsessensor_battery_level
+        - sensor.e1_hall_deteksjon_bevegelsessensor_battery_level
+        - sensor.e1_kjokken_deteksjon_lekkasjesensor_oppvaskmaskin_battery_level
+        - sensor.e1_kjokken_deteksjon_lekkasjesensor_utekran_battery_level
+        - sensor.e1_spisestue_deteksjon_roykvarsler_battery_level
+        - sensor.e1_stue_deteksjon_bevegelsessensor_battery_level
+        - sensor.e1_teknisk_deteksjon_lekkasjesensor_battery_level
+        - sensor.e1_teknisk_deteksjon_roykvarsler_battery_level
+        - sensor.e1_vaskerom_deteksjon_roykvarsler_battery_level
+        - sensor.e2_bod_deteksjon_bevegelsessensor_battery_level
+        - sensor.e2_bod_deteksjon_roykvarsler_battery_level
+        - sensor.e2_kontor_deteksjon_roykvarsler_battery_level
+        - sensor.e2_loftstue_deteksjon_bevegelsessensor_battery_level
+        - sensor.e2_loftstue_deteksjon_roykvarsler_battery_level
+        - sensor.e2_master_deteksjon_roykvarsler_battery_level
+        # Strøm
+        - sensor.electricity_price_toresmyr_48
+        - sensor.real_time_consumption_toresmyr_48
+        # IT-Relaterte sensordata
+        - sensor.min_ip
+        - sensor.speedtest_download
+        - sensor.speedtest_ping
+        - sensor.speedtest_upload
+        
+
+tags:
+    instance: prod
+    source: hass
+tags_attributes: friendly_name

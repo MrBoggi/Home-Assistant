@@ -2,3 +2,7 @@
 
 This is a backup of my Home Assistant. It is running on a Ubuntu server running serveral dockers.
 Now running the following version of HA: 0.105.5
+
+## Todo-list
+
+Next big thing is to update/rewcreate a good Lovelace-layout

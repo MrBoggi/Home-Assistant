@@ -1,0 +1,45 @@
+################################################################
+## Packages / system.yaml
+## Dependencies: None
+## Created: 30.12.2018
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      18.02.2020      Created
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+  - platform: dnsip
+    name: "Min IP"
+  - platform: template
+    sensors:
+      system_min_ip_last_changed:
+        friendly_name: "Ekstern IP Adresse - Sist endret"
+        value_template: "{{as_timestamp(states.sensor.min_ip.last_changed) | timestamp_local}}"
+
+group:
+  Ekstern_ip:
+    name: Ekstern IP
+    control: hidden
+    entities:
+    - sensor.min_ip
+    - sensor.system_min_ip_last_changed
+
+automation:
+  alias: Notify when external ip changes
+  initial_state: on 
+  trigger:
+    platform: state 
+    entity_id: sensor.dnsip
+  action:
+    service: notify.facebook
+    data_template:
+      message: > 
+        message: "New external IP address is {{ states('sensor.dnsip') }}"
+      target:
+        - '+4795969634'

@@ -1,0 +1,101 @@
+################################################################
+## Packages / sikkerhet.yaml
+## Dependencies: None
+## Created: 30.12.2018
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 0.1      30.12.2018      Created
+## 0.2      28.03.2019      Added automation for sending push when waterleak is detected.
+
+#########################################################################################################
+#   SENSORER                                                                                            #
+#########################################################################################################
+sensor:
+    
+input_boolean:
+  leak:
+    name: Lekkasje oppdaget
+#########################################################################################################
+#   GRUPPER                                                                                             #
+#########################################################################################################
+group:
+  lekkasjesensor:
+    name: Vannsikkerhet
+    control: hidden
+    entities:
+      - binary_sensor.e1_teknisk_deteksjon_lekkasjesensor_sensor
+      - binary_sensor.e1_kjokken_deteksjon_lekkasjesensor_utekran_sensor
+      - binary_sensor.e1_kjokken_deteksjon_lekkasjesensor_oppvaskmaskin_sensor
+      - binary_sensor.bryggerhus_lekkasje_bryggeri
+      - binary_sensor.bryggerhus_lekkasje_kjokken
+      - switch.e1_teknisk_sikkeret_stoppekran_switch
+      - input_boolean.leak
+  sikkerhet:
+    name: Sikkerhet
+    entities:
+      - binary_sensor.e1_hall_deteksjon_bevegelsessensor_sensor
+      - binary_sensor.e1_stue_deteksjon_bevegelsessensor_sensor      
+      - binary_sensor.e2_loftstue_deteksjon_bevegelsessensor_sensor
+#########################################################################################################
+#   AUTOMASJONER                                                                                        #
+#########################################################################################################
+automation:
+  - alias: Sikkerhet - Lekkasje
+    trigger:
+#    - platform: state
+#      entity_id: binary_sensor.e1_teknisk_deteksjon_lekkasjesensor_sensor
+#      to: 'on'
+#    - platform: state
+#      entity_id: binary_sensor.e1_kjokken_deteksjon_lekkasjesensor_utekran_sensor
+#      to: 'on'
+#    - platform: state
+#      entity_id: binary_sensor.bryggerhus_sensor_lekkasje_bryggeri
+#      to: 'on'
+    - platform: state
+      entity_id: group.lekkasjesensor
+      to: 'on'
+    action:
+    - service: switch.turn_on
+      entity_id: input_boolean.leak
+    - service: notify.slack
+      data_template:
+        message: ""
+        data: 
+          attachments:
+          - color: >
+              #800040
+            title: >
+              Lekkasje oppdaget. 
+            text: |
+              Sensor: {{ trigger.to_state.attributes.friendly_name }}
+              Klokken: {{now().strftime("%c")}}
+    - service: notify.facebook
+      data:
+        message: 'Lekkasje oppdaget av sensor  {{ trigger.to_state.attributes.friendly_name }} klokken  {{now().strftime("%c")}}'
+        target:
+          - '+4795969634'
+          - '+4791121411'
+
+  
+  - alias: Sikkerhet - Bevegelse - borte
+    trigger: 
+    - platform: state
+      entity_id: group.sikkerhet
+      to: 'on'
+    condition:
+        - condition: state
+          entity_id: input_boolean.hjemme
+          state: 'off'
+    action:
+    - service: notify.facebook
+      data:
+        message: 'Huset er i bortemodus og det er oppdaget bevegelse i huset eller dør/vindu har blitt åpnet. Sensor som har blitt trigget er {{ trigger.to_state.attributes.friendly_name }} klokken  {{now().strftime("%c")}}'
+        target:
+          - '+4795969634'
+          - '+4791724111'
+
+      

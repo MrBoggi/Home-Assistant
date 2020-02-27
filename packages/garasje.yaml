@@ -1,0 +1,71 @@
+################################################################
+## Packages / garasaje.yaml
+## Dependencies: None
+## Created: 04.02.2019
+## Note: Styring av alt garasjerelatert
+################################################################
+
+##############################
+## Changelog
+##
+##Version  |   Date       |     Description
+## 1.0      10.12.2019      Added to new production server
+
+#########################################################################################################
+#   AUTOMATION                                                                                          #
+#########################################################################################################
+
+automation:
+  - alias: "Garasje - Garasjeport"
+    trigger: 
+      - platform: state
+        entity_id: input_boolean.garage
+        to: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id: switch.g_garasje_kontroll_garasjeport_switch
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.garage
+      - service: switch.turn_off
+        entity_id: switch.g_garasje_kontroll_garasjeport_switch
+
+#  - alias: "Garasje - Skru av lader blå bilen"
+#    trigger:
+#      - platform: numeric_state
+#        entity_id: sensor.g_garasje_energi_billader_emil_power
+#        below: 5
+#      - platform: state
+#        entity_id: switch.g_garasje_energi_billader_emil_switch
+#        to: 'on'
+#        for:
+#          hours: 7
+#    condition:
+#      condition: and
+#      conditions: 
+#        - condition: state
+#          entity_id: switch.g_garasje_energi_billader_emil_switch
+#          state: 'on'
+#    action:
+#      - service: switch.turn_off
+#        entity_id: switch.g_garasje_energi_billader_emil_switch
+#      - service: notify.slack
+#        data:
+#          message: "Lading av blå bil avsluttet."
+#  
+#  - alias: "Garasje - Skru på lader blå bilen"
+#    trigger:
+#      - platform: state
+#        entity_id: switch.g_garasje_energi_billader_emil_switch
+#        to: 'on'
+#    action:
+#      - service: notify.slack
+#        data:
+#          message: "Lading av den blå bilen har startet."
+
+# group:
+#   blue_car:
+#     name: Blå bilen
+#     entities:
+#       - sensor.g_garasje_energi_billader_emil_power
+#       - sensor.g_garasje_energi_billader_emil_energy
+#       - switch.g_garasje_energi_billader_emil_switch
